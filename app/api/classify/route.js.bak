@@ -1,0 +1,93 @@
+﻿import OpenAI from 'openai';
+
+const DEEPSEEK_API_KEY = 'sk-ee38bd528f754f7583cb044a9db66041';
+
+const openai = new OpenAI({
+  baseURL: 'https://api.deepseek.com',
+  apiKey: DEEPSEEK_API_KEY,
+});
+
+const SYSTEM_PROMPT = `璇峰皢鐢ㄦ埛杈撳叆鐨勫唴瀹硅繘琛屽垎绫伙細寰呯湅鏂囩珷銆佹兂娉曘€佸畨鎺掋€佸共璐ф敹钘忋€傜敤鎴峰彲鑳戒細杈撳叆寰堝鍐呭锛屽皢鍐呭鎷嗗垎骞跺垎绫汇€傜洿鎺ヨ緭鍑哄垎绫荤殑缁撴灉锛屼笉鐢ㄥ叾浠栬В閲婂拰璇存槑銆?鏍煎紡锛?寰呯湅鏂囩珷锛?鎯虫硶锛?瀹夋帓锛?骞茶揣鏀惰棌锛歚;
+
+async function classifyContent(userInput) {
+  try {
+    const completion = await openai.chat.completions.create({
+      messages: [
+        { role: 'system', content: SYSTEM_PROMPT },
+        { role: 'user', content: userInput }
+      ],
+      model: 'deepseek-chat',
+    });
+
+    const result = completion.choices[0].message.content;
+    return parseClassificationResult(result);
+  } catch (error) {
+    console.error('Error classifying content:', error);
+    throw error;
+  }
+}
+
+function parseClassificationResult(result) {
+  // Parse the AI response into structured data
+  const categories = {
+    articles: [],    // 寰呯湅鏂囩珷
+    ideas: [],       // 鎯虫硶
+    tasks: [],       // 瀹夋帓
+    resources: []    // 骞茶揣鏀惰棌
+  };
+
+  const lines = result.split('\n');
+  let currentCategory = null;
+
+  for (const line of lines) {
+    if (line.startsWith('寰呯湅鏂囩珷锛?)) {
+      currentCategory = 'articles';
+      // If there's content on the same line after the category
+      const content = line.substring('寰呯湅鏂囩珷锛?.length).trim();
+      if (content) categories.articles.push(content);
+    } else if (line.startsWith('鎯虫硶锛?)) {
+      currentCategory = 'ideas';
+      const content = line.substring('鎯虫硶锛?.length).trim();
+      if (content) categories.ideas.push(content);
+    } else if (line.startsWith('瀹夋帓锛?)) {
+      currentCategory = 'tasks';
+      const content = line.substring('瀹夋帓锛?.length).trim();
+      if (content) categories.tasks.push(content);
+    } else if (line.startsWith('骞茶揣鏀惰棌锛?)) {
+      currentCategory = 'resources';
+      const content = line.substring('骞茶揣鏀惰棌锛?.length).trim();
+      if (content) categories.resources.push(content);
+    } else if (line.trim() && currentCategory) {
+      // Add non-empty lines to the current category
+      categories[currentCategory].push(line.trim());
+    }
+  }
+
+  return categories;
+}
+
+export async function POST(request) {
+  try {
+    const { content } = await request.json();
+    
+    if (!content || typeof content !== 'string') {
+      return new Response(JSON.stringify({ error: 'Content is required' }), {
+        status: 400,
+        headers: { 'Content-Type': 'application/json' }
+      });
+    }
+    
+    const result = await classifyContent(content);
+    
+    return new Response(JSON.stringify(result), {
+      status: 200,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  } catch (error) {
+    console.error('Error in classify API route:', error);
+    return new Response(JSON.stringify({ error: 'Failed to classify content' }), {
+      status: 500,
+      headers: { 'Content-Type': 'application/json' }
+    });
+  }
+}
