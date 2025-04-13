@@ -1,8 +1,8 @@
 {
-  "buildCommand": "npm run build",
+  "buildCommand": "pnpm build",
   "outputDirectory": ".next",
-  "devCommand": "npm run dev",
-  "installCommand": "npm install --legacy-peer-deps --no-audit --no-fund",
+  "devCommand": "pnpm dev",
+  "installCommand": "pnpm install --no-frozen-lockfile",
   "framework": "nextjs",
   "regions": ["sin1"],
   "headers": [
