@@ -5,8 +5,8 @@
   "author": "libohan-ha",
   "description": "Personal knowledge management system with AI-powered content classification",
   "engines": {
-    "node": ">=20.0.0",
-    "npm": ">=10.0.0"
+    "node": "20.x",
+    "npm": "10.x"
   },
   "scripts": {
     "dev": "next dev",
@@ -50,7 +50,7 @@
     "class-variance-authority": "^0.7.1",
     "clsx": "^2.1.1",
     "cmdk": "1.0.4",
-    "date-fns": "3.6.0",
+    "date-fns": "2.30.0",
     "embla-carousel-react": "8.5.1",
     "input-otp": "1.4.1",
     "lucide-react": "^0.454.0",
