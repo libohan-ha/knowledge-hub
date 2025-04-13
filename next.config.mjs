@@ -15,12 +15,16 @@ const nextConfig = {
   },
   images: {
     unoptimized: true,
+    domains: ['sbtgwklzktppapdrthkn.supabase.co'],
   },
   experimental: {
     webpackBuildWorker: true,
     parallelServerBuildTraces: true,
     parallelServerCompiles: true,
   },
+  poweredByHeader: false,
+  reactStrictMode: true,
+  swcMinify: true,
 }
 
 if (userConfig) {

@@ -17,7 +17,16 @@ yarn-error.log*
 .pnpm-debug.log*
 
 # env files
-.env*
+.env
+.env.local
+.env.development.local
+.env.test.local
+.env.production.local
+
+# 不排除示例和生产环境配置
+!.env.example
+!.env.production
+!.env.development
 
 # vercel
 .vercel

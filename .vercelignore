@@ -1,0 +1,12 @@
+.git
+.github
+.vscode
+node_modules
+.env.local
+.env.development
+.env.example
+README.md
+LICENSE
+*.log
+.DS_Store
+Thumbs.db
